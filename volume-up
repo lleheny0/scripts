@@ -1,0 +1,3 @@
+#!/bin/sh
+
+amixer -M -c 2 set PCM 5%+

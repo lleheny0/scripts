@@ -1,0 +1,34 @@
+#!/bin/sh
+
+window_id=$(xdotool getactivewindow)
+
+# wmctrl -ir "$window_id" -b remove,maximized_vert,maximized_horz
+
+x=$(xwininfo -id "$window_id" | awk '/Absolute upper-left X:/ { print $4 }')
+y=$(xwininfo -id "$window_id" | awk '/Absolute upper-left Y:/ { print $4 }')
+
+x_offset=$(xwininfo -id "$window_id" | awk '/Relative upper-left X:/ { print $4 }')
+y_offset=$(xwininfo -id "$window_id" | awk '/Relative upper-left Y:/ { print $4 }')
+x=$(( x - x_offset))
+y=$(( y - y_offset))
+
+width=$(xdotool getwindowgeometry "$window_id" | awk '/Geometry:/ { print $2 }'|cut -d"x" -f1)
+height=$(xdotool getwindowgeometry "$window_id" | awk '/Geometry:/ { print $2 }'|cut -d"x" -f2)
+
+if [ "$x" -lt 3840 ]; then
+    if [ "$x" -lt 1920 ]; then
+        new_x=$((960 - x_offset - width / 2))
+    else
+        new_x=$((2880 - x_offset - width / 2))
+    fi
+else
+    new_x=$((4480 - x_offset - width / 2))
+fi
+
+if [ "$x" -lt 3840 ]; then
+    new_y=$((540 - 40 - height / 2))
+else
+    new_y=$((540 - height / 2))
+fi
+
+xdotool windowmove "$window_id" "$new_x" "$new_y"

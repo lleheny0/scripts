@@ -1,0 +1,61 @@
+#!/bin/sh
+
+while ([ -v $HZ1 ]) do
+    echo 'Main monitor:'
+    echo '1. 144hz'
+    echo '2. 120hz'
+    echo '3. 60hz'
+    read -n1 -p '> ' U1
+    echo ''
+
+    case $U1 in
+        1) HZ1=144;;
+        2) HZ1=120;;
+        3) HZ1=60;;
+    esac
+done
+
+while ([ -v $HZ2 ])
+do
+    echo 'Secondary monitors:'
+    echo '1. 75hz'
+    echo '2. 60hz'
+    echo '3. Off'
+    read -n1 -p '> ' U2
+    echo ''
+
+    case $U2 in
+        1) HZ2=75;;
+        2) HZ2=60;;
+        3) HZ2=-1;;
+    esac
+done
+
+while ([ -v $FCP1 ])
+do
+    read -n1 -p 'Force composition pipeline on main monitor (y/n)? ' U3
+    echo ''
+
+    case $U3 in
+        [Yy]) FCP1='On';;
+        [Nn]) FCP1='Off';;
+    esac
+done
+
+if [ $HZ2 = -1 ]; then
+    nvidia-settings -a CurrentMetaMode="DP-0: 1920x1080_$HZ1 +0+0 {ForceCompositionPipeline=$FCP1}"
+else
+    while ([ -v $FCP2 ])
+    do
+        read -n1 -p 'Force composition pipeline on secondary monitors (y/n)? ' U4
+        echo ''
+
+        case $U4 in
+            [Yy]) FCP2='On';;
+            [Nn]) FCP2='Off';;
+        esac
+    done
+    nvidia-settings -a CurrentMetaMode="DP-0: 1920x1080_$HZ1 +1920+0 {ForceCompositionPipeline=$FCP1}, HDMI-0: 1920x1080_$HZ2 +0+0 {ForceCompositionPipeline=$FCP2}, DVI-D-0: 1280x1024_$HZ2 +3840+56 {ForceCompositionPipeline=$FCP2}"
+fi
+
+pkill picom
