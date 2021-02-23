@@ -4,14 +4,16 @@ while ([ -v $HZ1 ]) do
     echo 'Main monitor:'
     echo '1. 144hz'
     echo '2. 120hz'
-    echo '3. 60hz'
+    echo '3. 100hz'
+    echo '4. 60hz'
     read -n1 -p '> ' U1
     echo ''
 
     case $U1 in
         1) HZ1=144;;
         2) HZ1=120;;
-        3) HZ1=60;;
+        3) HZ1=100;;
+        4) HZ1=60;;
     esac
 done
 
@@ -57,5 +59,3 @@ else
     done
     nvidia-settings -a CurrentMetaMode="DP-0: 1920x1080_$HZ1 +1920+0 {ForceCompositionPipeline=$FCP1}, HDMI-0: 1920x1080_$HZ2 +0+0 {ForceCompositionPipeline=$FCP2}, DVI-D-0: 1280x1024_$HZ2 +3840+56 {ForceCompositionPipeline=$FCP2}"
 fi
-
-pkill picom
